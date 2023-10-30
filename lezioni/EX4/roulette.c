@@ -1,4 +1,4 @@
-/* Questo programma simula una partita di roulette */
+/* Questo programma simula una partita di roulette 30/10/2023*/
 
 # include <stdio.h>
 # include <math.h>
