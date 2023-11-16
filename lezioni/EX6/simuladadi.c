@@ -5,6 +5,7 @@ Questo foglio soddisfa la seconda parte di questa esercitazione
 # include <stdio.h>
 # include <math.h>
 # include <stdlib.h>
+# include <time.h>
 
 /*
 simuladadi.c che simuli il lancio di n dadi a sei facce, per verificare che l’evento di uscita di una
@@ -13,77 +14,113 @@ Per poter fare ciò, è necessario ripetere molte volte l’esperimento (cioè r
 di n dadi), e tener traccia della frequenza con cui in ogni lancio di n dadi si verifica l’uscita di k 3.
 */
 
-long long int factorial(int); // dichiarazione della funzione fattoriale
-
 int dado();
+
+/*
+Per evitare che il generatore di numeri casuali generi sempre lo stesso risultato
+per dado, il seme della sequenza va inizializzato una sola volta all’inizio del programma, e non
+all’interno della funzione.
+*/
+
+/*
+Devo contare quante volte si è verificato un certo k. k può andare da 0 a n, perché puoi avere 0 successi o il massimo di successi.
+A ogni giro ho un nuovo k. Posso creare un array con il verificarsi di n successi, dove la posizione indica quel certo numero di successi,
+e il valore viene aggiornato con una somma a ogni giro.
+*/
 
 int main() {
 
-    int i, k;
+    int seed;
+    int i, ii, k, res_lancio, count_succ = 0;
+    int k_successi[50];
+    double k_succ_freq[50];
     long long int n;
     int n_lanci;
     double p, bern_p;
     FILE *fp;
 
+    // set seed
+    seed = time(NULL);
+    srand(seed);
+
     // set n and p
-    // n = 12;
-    scanf("set n: %llu\n", n);
-    scanf("set n_lanci: %i\n", n_lanci);
+    printf("Set n: ");
+    scanf("%llu", &n);
+    printf("Set n_lanci: ");
+    scanf("%i", &n_lanci);
     p = 1.0/6; // questa è la probabilità standard per un dado a 6 facce
 
-    // printf("n = %llu; p = %.2f\n", n, p);
+    // inizializza l'array con i successi
+    for (i=0; i<=n; i++) {
+        k_successi[i] = 0;
+    }
 
     // apri il file di output
     // nonostante l'istogramma sia solo il grafico effettivo, chiamiamo questo file "istogramma.dat", come richiesto dall'esercizio
     fp = fopen("istogramma.dat", "w");
 
-    // compute bernoulli
-    for (i=0; i<=n; i++) {
-        // useless variable assignment, fatto solo per non confondersi tra l'indicatore e il k
-        k = i;
-
-        // printf("k = %3i, n! = %llu, k! = %llu, n-k! = %llu, p^k = %8.6f, (1-p)^k = %8.6f\n",
-        // k,
-        // factorial(n),
-        // factorial(k),
-        // factorial(n-k),
-        // pow(p, k),
-        // pow(1-p, n-k)
-        // );
-
-        bern_p = ( factorial(n) / ( factorial(k) * factorial(n-k) ) ) * (pow(p, k) * pow(1-p, n-k));
-        // printf("bern_p is %.5f\n", bern_p);
-
-        // print on output file
-        fprintf(fp, "%d %f\n", k, bern_p);
-    }
     
+    for (i=0; i<=n_lanci; i++) { // per n_lanci...
+        for (ii=0; ii<=n; ii++) {// ...lancia n dadi
+            res_lancio = dado();
+            // printf("%i ", res_lancio);
+            
+            if (res_lancio == 3) count_succ++;
 
+        } 
+        // printf("| k: %i\n", count_succ);
 
+        // aggiorna la quantità di successi
+        k_successi[count_succ] = k_successi[count_succ] + 1;
+
+        count_succ = 0; // il contatore viene azzerato a ogni nuovo giro
+    }
+
+    // calcola la frequenza dei k successi
+    for (i=0; i<n; i++) {
+        // printf("k_successi: %i / %i = %f\n", k_successi[i], n_lanci, (double)k_successi[i] / n_lanci);
+        k_succ_freq[i] = (double)k_successi[i] / n_lanci;
+    }
+
+    //print data
+    printf("k_successi: \n");
+    for (i=0; i<n; i++) {
+        printf("%i ", k_successi[i]);
+    }
+    printf("\n");
+
+    //print data
+    printf("k_successi frequenze: \n");
+    for (i=0; i<n; i++) {
+        printf("%f ", k_succ_freq[i]);
+    }
+    printf("\n");
+
+    // final print to output file
+    for (i=0; i<n; i++) {
+        fprintf(fp, "%i %i %f\n", i, k_successi[i], k_succ_freq[i]);
+    }
 }
 
 /*
-Questa funzione simula il lancio di un dado
+Confrontare (graficamente) i dati generati dai due programmi per gli stessi valori di n e k. 
+Qual è il numero minimo di lanci da usare nel secondo programma per ottenere un campionamento ragionevole della distribuzione di Bernoulli?
+    -- direi dal migliaio in su.
+Se si esegue il secondo programma più volte per uno stesso numero di lanci Nlanci, come cambia la distribuzione? 
+    -- è difficile vedere cambiamenti nella distribuzione per n_lanci > 1000, ma l'idea è che più è basso n_lanci, 
+    più il risultato rischia di non rappresentare la distribuzione di Bernoulli.
+Che cosa si può fare per diminuire le fluttuazioni nel risultato?
+    -- per n_lanci che tende a infinito, la distribuzione che si ottiene è sempre più simile a quella di Bernoulli.
+    Ovviamente, per avere basse fluttuazioni, bisogna avere n_lanci molto grande.
+    L'idea è che se in un esperimento si campionano troppi pochi dati, si rischia di osservare un comportamento che è distante da quello reale/atteso.
+    Quando si fanno delle misure è bene farne tante per poter catturare con maggior precisione la misura reale.
 */
+
 
 int dado() {
-    int seed;
-    seed = time(NULL);
-    srand(seed);
-    return rand()%6;
-}
+    /*
+    Questa funzione simula il lancio di un dado
+    */
 
-/*
-Qui viene implementata la funzione fattoriale
-*/
-
-long long int factorial(int n){
-
-    if (n==0) {
-        return 1;
-    } 
-    else if (n > 0) {
-        return n * factorial(n-1);
-    }
-
+    return rand()%6+1;
 }
