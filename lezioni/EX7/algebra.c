@@ -1,9 +1,15 @@
 # include <stdio.h>
 # include <math.h>
+# include <stdlib.h>
+# include <time.h>
 
 double * product(double [3][3], double [3]); // dichiarazione della funzione product
+double * genvec(); // dichiarazione della funzione che genera il vettore
 
 int main() {
+
+    // set randomizer
+    srand(time(NULL));
 
     // printf("Sanity check\n");
 
@@ -21,6 +27,7 @@ int main() {
     }
 
     // stampa la matrice
+    printf("This is A: \n");
     for (i=0; i<3; i++) {
         for (ii=0; ii<3; ii++) {
             printf("%.1f  ", A[i][ii]);
@@ -35,6 +42,7 @@ int main() {
     }
 
     // stampa il vettore
+    printf("This is v: \n");
     for (i=0; i<3; i++) {
         printf("%.1f ", vec[i]);
     }
@@ -43,15 +51,52 @@ int main() {
     // calcola il prodotto e salva w
     w = product(A, vec);
 
-    printf("This is w: \n");
-
     // stampa il vettore
+    printf("This is w: \n");
     for (i=0; i<3; i++) {
         printf("%.1f ", w[i]);
     }
     printf("\n");
 
+    printf("\n\n");
+    printf("Genera il versore...\n");
 
+    genvec();
+
+
+}
+
+double * genvec() {
+    static double versore[3];
+    int i;
+
+    // generate random vector
+    for (i=0; i<3; i++) {
+        versore[i] = (double) rand() / (RAND_MAX / 2) - 1;
+    }
+
+    // stampalo
+    printf("This is versore casuale: \n");
+    for (i=0; i<3; i++) {
+        printf("%.10f ", versore[i]);
+    }
+    printf("\n\n");
+
+    // rendilo un versore
+    for (i=0; i<3; i++) {
+        versore[i] = versore[i] / (sqrt(pow(versore[i], 2)));
+    }
+
+    // stampalo
+    printf("This is versore: \n");
+    for (i=0; i<3; i++) {
+        printf("%.10f ", versore[i]);
+    }
+    printf("\n");
+
+
+
+    return versore;
 }
 
 double * product(double mat[3][3], double vec[3]) {
