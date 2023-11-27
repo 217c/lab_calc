@@ -1,3 +1,5 @@
+/* Questo riguarda le parti 1 e 2 */
+
 # include <stdio.h>
 # include <math.h>
 # include <stdlib.h>
