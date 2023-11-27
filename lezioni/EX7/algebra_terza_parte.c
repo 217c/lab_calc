@@ -1,10 +1,19 @@
+/*
+Le risposte alle domande sono in fondo al foglio.
+Questa esercitazione per funzionare doveva includere alcune cose che non erano esplicitate nelle istruzioni.
+la terza_parte_IMPROVED è successiva e alternativa a questo. Serve per guardare tutti gli angoli e non era richiesta,
+l'ho creata per capire meglio il problema e rispondere alle domande.
+*/
+
+
 # include <stdio.h>
 # include <math.h>
 # include <stdlib.h>
 # include <time.h>
 
-double * product(double [3][3], double [3]); // dichiarazione della funzione product
-double * genvec(); // dichiarazione della funzione che genera il vettore
+void product(double A[][3], double v[], double w[]); // dichiarazione della funzione product
+void genvec(double v[]); // dichiarazione della funzione che genera il vettore
+void printvec(double v[]);
 
 // file pointer
 FILE *outfpr;
@@ -16,25 +25,27 @@ int main() {
 
     // dichiara le variabili
     double A[3][3];
-    double vec[3];
-    double *w, *v; /* pointers to a double */
+    double v[3], w[3];
     double mod_squared;
 
     int i, ii;
-    int angolo;
-
-    // setta la matrice
+    double angolo;
 
     // // leggi l'angolo
     printf("Inserisci un angolo phi: \n");
-    scanf("%d", &angolo);
+    scanf("%lf", &angolo);
 
+    // mettilo in radianti (non mi pare ci fosse scritto nelle istruzioni)
+    angolo = angolo * M_PI / 180;
+    printf("phi = %6.4f \n", angolo);
+
+    // setta la matrice
     /* 
     Considera che quando inizializzi un array bidimensionale, tutti i valori sono 0.
     Quindi sostituisco solo quelli che mi servono seguendo le istruzioni
     */
     A[0][0] = cos(angolo);
-    A[0][1] = -1.0 * sin(angolo);
+    A[0][1] = - sin(angolo);
     A[1][0] = sin(angolo);
     A[1][1] = cos(angolo);
 
@@ -47,6 +58,7 @@ int main() {
             printf("%.5f  ", A[i][ii]);
             }
         printf("\n");
+        // print("")
     }
 
     /*
@@ -57,15 +69,27 @@ int main() {
         iii. si calcola il modulo quadro del vettore w e si stampa su schermo solo se esso non è uguale a 1 (entro una tolleranza di una parte su 10^7).
     */
 
-   for (i=0; i<=100; i++) {
+   outfpr = fopen("coordinate.dat", "w");
+
+   for (i=0; i<=200; i++) {
+
         // genera il vettore
-        v = genvec();
+        /*
+        non sono d'accordo con questa modalità di assegnazione di una variabile.
+        È surreale che una funzione non ritorni nulla e magicamente una variabile venga assegnata.
+        Credo che sia molto meglio la modalità in cui la funzione ritorna un puntatore attraverso cui si assegna il valore,
+         com'era nella versione precedente del file.
+        */
+        genvec(v);
+
+        // printf("This is v: \n");
+        // printvec(v);
 
         // calcola il prodotto
-        w = product(A, v);
+        product(A, v, w);
 
         // output to file
-        outfpr = fopen("coordinate.dat", "a");
+        
         fprintf(outfpr, "%f %f %f %f %f %f\n",
             v[0],
             v[1],
@@ -76,14 +100,14 @@ int main() {
             );
         
         // modulo quadro
-        // devo dire che questa richiesta non l'ho capita. Non ho implementato la tolleranza come richiesto, ma in generale a che serve?
-        for (ii=0; ii<3; ii++) {
-            mod_squared = pow(sqrt(pow(w[ii], 2)), 2);
+        // devo dire che questa richiesta non l'ho capita. In generale a che serve?
+        // for (ii=0; ii<3; ii++) {
+        //     mod_squared = pow(sqrt(pow(w[ii], 2)), 2);
 
-            if (mod_squared != 1.0) {
-                printf("This is mod_squared: %.10f\n", mod_squared);
-            }
-        }
+        //     if ((mod_squared-1.0) >= 0.0000001) {
+        //         printf("This is mod_squared: %.10f\n", mod_squared);
+        //     }
+        // }
 
    }
 
@@ -92,34 +116,143 @@ int main() {
 
 }
 
-double * genvec() {
-    static double versore[3];
-    int i;
 
-    // generate random vector
-    for (i=0; i<3; i++) {
-        versore[i] = (double) rand() / (RAND_MAX / 2) - 1;
-    }
 
-    // rendilo un versore
-    for (i=0; i<3; i++) {
-        versore[i] = versore[i] / (sqrt(pow(versore[i], 2)));
-    }
+// void genvec(double v[]) {
+//     int i;
 
-    return versore;
-}
+//     // generate random vector
+//     for (i=0; i<3; i++) {
+//         v[i] = (double) rand() / (RAND_MAX / 2) - 1;
+//     }
 
-double * product(double mat[3][3], double vec[3]) {
+//     // rendilo un versore
+//     // for (i=0; i<3; i++) {
+//     //     v[i] = v[i] / (sqrt(pow(v[i], 2)));
+//     // }
+
+// }
+
+/*
+
+Tolgo le mie e metto le funzioni scritte dalla prof.
+void product(double A[][3], double v[], double w[]) {
     int j, ii;
-    double sum = 0;
-    static double w[3];
+
+    // reset elements to 0.0
+    for (j=0; j<3; j++) {
+        w[j] = 0.0;
+    }
 
     for (j=0; j<3; j++) {
         for (ii=0; ii<3; ii++) {
-            sum = sum + mat[j][ii] * vec[ii];
+            w[j] += A[j][ii] * v[ii];
         }
-        w[j] = sum;
     }
 
-    return w;
+    // return w;
 }
+
+void printvec(double v[]) {
+    // stampa il vettore
+    int i;
+
+    // printf("This is v: \n");
+    for (i=0; i<3; i++) {
+        printf("%.1f ", v[i]);
+    }
+    printf("\n");
+}
+
+*/
+
+void product ( double A[ ] [ 3 ] , double v [] , double w[ ] ) {
+    int r , c ;
+    for	( r=0;r <3;r++)
+    {
+         w[ r ]=0.0;
+         }
+          for	( r=0;r <3;r++) {
+             for	(c=0;c<3;c++) {
+                 w[ r]+=A[ r ] [ c ]*v [ c ] ;
+                 }
+                 }
+                 }
+
+// void genvec (double v[]) {
+//     int i;
+//     double mod=0.0;
+    
+//     for ( i =0;i <3; i++){
+//         v [ i ]= -1.0+2.0*( double ) (rand () )/RAND_MAX;
+//         mod=mod+v [ i ]*v [ i ] ;
+//         }
+//     mod=sqrt (mod);
+//     for ( i =0;i <3; i++) {
+//         v [ i ]=v [ i ]/mod;
+//         }
+// }
+
+void genvec(double v[]) { // this is genvec_nuovo
+    int i;
+    double mod;
+
+    // generate random vector
+    for (i=0; i<3; i++) {
+        v[i] = (double) rand() / (RAND_MAX / 2) - 1;
+    }
+    // printf("Generated nuovo's: \n");
+    // printvec(v);
+
+    // get mod
+    for (i=0; i<3; i++) {
+        mod = mod + pow(v[i], 2);
+    }
+    mod = sqrt(mod);
+
+    // rendilo un versore
+    for (i=0; i<3; i++) {
+        v[i] = v[i] / mod;
+    }
+
+}
+
+void	printvec ( double v [ ] )
+{
+	int	i ;
+	for	( i =0;i <3; i++)
+{
+	printf ("%6.4f	" ,v [ i ]) ;
+}
+printf ("\n") ;
+}
+
+// double modulus( double v [ ] )
+// {
+// 	int	i ;
+// 	double	l =0;
+// 	for	( i =0;i <3; i++)
+// { l=l+v [ i ]*v [ i ] ;
+// }	
+// l= sqrt(l) ; 
+// return	l ;
+// }
+
+/*
+Come cambia il grafico di correlazione fra la quarta e la prima colonna del file coordinate.dat in funzione dell’angolo ϕ?
+    - La correlazione dipende dall'angolo di rotazione. 
+    Ad esempio per 0, 180, 360, sono correlati perfettamente (che sia positivamente o negativamente).
+
+Come mai per alcuni valori notevoli il grafico è un cerchio e per altri una retta?
+    - Con la versione IMPROVED sono riuscito a guardare tutti gli angoli.
+    Si nota che:
+        a 0 e 360 c'è una correlazione positiva perfetta (+1.0)
+        a 90 non c'è correlazione (0.0), infatti i punti sono disposti a cerchio (come quelli dello scatter plot fra v1 e v3)
+        poi si scorre verso la correlazione negativa che arriva perfetta a 180 (-1.0)
+        di nuovo a 270 non c'è correlazione (0.0)
+        e si aumenta fino a una correlazione positiva perfetta (+1.0) a 360°, che equivale effettivamente a 0°
+
+    I punti si dispongono a cerchio quando non c'è correlazione per via dell'effetto del modulo. 
+    Infatti se togli il modulo si dispongono a quadrato, ma il comportamento della correlazione è comunque lo stesso (testato). 
+    Si tratterebbe di ruotare un quadrato.
+*/
