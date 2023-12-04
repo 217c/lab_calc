@@ -11,7 +11,7 @@ Si gioca con la parola: "estemporaneo".
 # include <string.h>
 
 // direttive define
-# define n_lettere 12+1 // 9 lettere della parola "estemporaneo" + 1 per il carattere di fine stringa
+# define n_lettere 12+1 // 12 lettere della parola "estemporaneo" + 1 per il carattere di fine stringa
 # define min_minuscole 97
 # define max_minuscole 122
 
