@@ -45,7 +45,7 @@ int main() {
     // impostazione del seme di randomizzazione
     srand(time(NULL));
 
-    // open file in write mode
+    // open file in append mode
     outfpr = fopen("histo_H.txt", "a");
 
     // ##################################### programma...
@@ -113,10 +113,6 @@ int main() {
         n_count = 0;
         
     }
-
-    
-
-
 
 }
 
