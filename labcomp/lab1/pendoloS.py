@@ -1,3 +1,7 @@
+"""
+Questo programma implementa l'algoritmo di Eulero-Cromer sul sistema di un oscillatore armonico (anche se il programma si chiama pendoloS, qui è un oscillatore.)
+"""
+
 # import sys
 # import math
 import pandas as pd
