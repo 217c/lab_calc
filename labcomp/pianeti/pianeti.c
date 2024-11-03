@@ -238,7 +238,7 @@ void eulero_cromer(spaziofasi *dati,
 }
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
+/* 
 void eulero(spaziofasi *dati, float theta0, float v0, float Tm, float Dt, float O2, float verbose){
 
   int N,i;
