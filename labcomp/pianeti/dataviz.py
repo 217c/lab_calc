@@ -42,7 +42,7 @@ for i, col in enumerate(["r_a_x", "r_a_y", "r_b_x", "r_b_y", "v_a_x", "v_a_y", "
     ax.plot(df['t'], df[col], label=col)
     ax.set_xlabel('t')
     ax.set_ylabel(col)
-    ax.legend()
+    # ax.legend()
     ax.grid(True)  # Aggiunge la griglia
 
 plt.show()
@@ -84,8 +84,11 @@ plt.plot(0, 0, "yo", label="Sole")  # "yo" rappresenta un punto giallo
 # Imposta etichette per gli assi e limiti dell'area visualizzata
 plt.xlabel('x')
 plt.ylabel('y')
-plt.xlim(-3, 3)
-plt.ylim(-3, 3)
+
+my_limite = 5
+
+plt.xlim(-my_limite, my_limite)
+plt.ylim(-my_limite, my_limite)
 
 # Aggiungi una legenda e una griglia
 plt.legend()

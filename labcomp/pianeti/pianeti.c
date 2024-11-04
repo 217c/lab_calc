@@ -170,7 +170,7 @@ void eulero_cromer(spaziofasi *dati,
                         float Mb){
 
   int N,i;
-  float phi_a_x, phi_a_y, phi_b_x, phi_b_y, r_a_x_n, r_a_y_n, r_b_x_n, r_b_y_n, v_a_x_n, v_a_y_n, v_b_x_n, v_b_y_n, r_ab, t, Em, E0, DE;
+  float phi_a_x, phi_a_y, phi_b_x, phi_b_y, r_a_x_n, r_a_y_n, r_b_x_n, r_b_y_n, v_a_x_n, v_a_y_n, v_b_x_n, v_b_y_n, r_ab_x, r_ab_y, r_ab_dist, r_a_dist, r_b_dist, t, Em, E0, DE;
   
   N = (int) Tm/Dt;
   printf("# viene usato l'algoritmo di Eulero-Cromer\n");
@@ -189,13 +189,17 @@ void eulero_cromer(spaziofasi *dati,
   //printf("# t[s], theta[rad], v[rad/s], a[rad/s^2],  DE \n");
   
   for(i=0;i<N;i++){
-    r_ab = sqrt(pow((r_a_x_n - r_b_x_n),2) + pow((r_a_y_n - r_b_y_n),2)); // distanza fra due punti sul piano
+    r_ab_x = r_b_x_n - r_a_x_n; // orientato da a a b
+    r_ab_y = r_b_y_n - r_a_y_n; // orientato da a a b
+    r_ab_dist = sqrt(pow((r_ab_x),2) + pow((r_ab_y),2)); // distanza fra due punti sul piano
+    r_a_dist = sqrt(pow(r_a_x_n,2) + pow(r_a_y_n,2));
+    r_b_dist = sqrt(pow(r_b_x_n,2) + pow(r_b_y_n,2));
 
     // accelerazioni
-    phi_a_x = GAMMA*( r_a_x_n/pow(r_a_x_n,3) + Mb*(r_ab/pow(r_ab,3)) );
-    phi_a_y = GAMMA*( r_a_y_n/pow(r_a_y_n,3) + Mb*(r_ab/pow(r_ab,3)) );
-    phi_b_x = GAMMA*( r_b_x_n/pow(r_b_x_n,3) + Ma*(r_ab/pow(r_ab,3)) );
-    phi_b_y = GAMMA*( r_b_y_n/pow(r_b_y_n,3) + Ma*(r_ab/pow(r_ab,3)) );
+    phi_a_x = GAMMA*( -r_a_x_n/pow(r_a_dist,3) + Mb*(r_ab_x/pow(r_ab_dist,3)) );
+    phi_a_y = GAMMA*( -r_a_y_n/pow(r_a_dist,3) + Mb*(r_ab_y/pow(r_ab_dist,3)) );
+    phi_b_x = GAMMA*( -r_b_x_n/pow(r_b_dist,3) - Ma*(r_ab_x/pow(r_ab_dist,3)) );
+    phi_b_y = GAMMA*( -r_b_y_n/pow(r_b_dist,3) - Ma*(r_ab_y/pow(r_ab_dist,3)) );
 
     // velocità
     v_a_x_n = v_a_x_n + phi_a_x*Dt;
@@ -230,7 +234,7 @@ void eulero_cromer(spaziofasi *dati,
     dati->phi_a_y[i] = phi_a_y;
     dati->phi_b_x[i] = phi_b_x;
     dati->phi_b_y[i] = phi_b_y;
-    dati->r_ab[i] = r_ab;
+    dati->r_ab[i] = r_ab_dist;
 
 
     // dati->DE[i] = DE;
