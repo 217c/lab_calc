@@ -5,15 +5,12 @@
 #include <stdbool.h>
 
 // Funzione per generare un numero casuale compreso tra 0 e L-1 senza bias 
-
 int rand_range(int L) {
-
-    int res = rand()/((RAND_MAX + 1u) / L);
+    int res = rand()/((RAND_MAX + 1u) / L); // 1u è 1 senza segno 
     /* int res = rand() % L; */
     /* printf("res: %d\n", res); */
     return res;
     // Nota: rand()%L e' biased se RAND MAX non e' multiplo di L
-
 };
 
 
@@ -33,18 +30,13 @@ bool posizione_occupata(char *reticolo, int lato_reticolo, int x, int y) {
 
 
 // Funzione per inizializzare le particelle in posizioni casuali
-
 void inizializza_particelle(char *reticolo, Particella *particelle, int lato_reticolo, int numero_particelle) {
-    
     for (int i = 0; i < numero_particelle; i++) {
-        
         int x, y; 
-    
         do {
             x = rand_range(lato_reticolo);
             y = rand_range(lato_reticolo);
         } while (posizione_occupata(reticolo, lato_reticolo, x, y));
-
             particelle[i].x = x;
             particelle[i].y = y;
             particelle[i].id = i;
@@ -56,19 +48,17 @@ void inizializza_particelle(char *reticolo, Particella *particelle, int lato_ret
 
 
 // Funzione per aggiornare la posizione di una particella con condizioni periodiche al 
-
 void aggiorna_posizione(Particella *p, int lato_reticolo, char *reticolo) {
     int nuova_x = p->x;
     int nuova_y= p->y;
     int direzione = rand_range(4);
 
-
     switch (direzione) {
         case 0: // Su
-            nuova_y= (p->y + 1) % lato_reticolo;
+            nuova_y = (p->y + 1) % lato_reticolo;
             break;
         case 1: // Giù
-            nuova_y= (p->y - 1+ lato_reticolo) % lato_reticolo;
+            nuova_y = (p->y - 1 + lato_reticolo) % lato_reticolo; // questa riga era presente in una domanda degli anni passati
             break;
         case 2: // Destra
             nuova_x = (p->x + 1) % lato_reticolo;
@@ -80,14 +70,14 @@ void aggiorna_posizione(Particella *p, int lato_reticolo, char *reticolo) {
 
     
     // Controlla se la nuova posizione è occupata
-    if (!posizione_occupata (reticolo, lato_reticolo, nuova_x, nuova_y)) { // Aggiorna la posizione nel reticolo
-        reticolo[p->y * lato_reticolo + p->x] = '_';
-        p->x = nuova_x;
-        p->y = nuova_y;
-        reticolo[p->y * lato_reticolo + p->x] = '0';
-
+    if (!posizione_occupata(reticolo, lato_reticolo, nuova_x, nuova_y)) { // Aggiorna la posizione nel reticolo se la posizione scelta non era occupata
         
-        // Aggiorna i contatori 
+        reticolo[p->y * lato_reticolo + p->x] = '_'; // svuota la casella vecchia
+        p->x = nuova_x; // aggiorna le coordinate della particella
+        p->y = nuova_y;
+        reticolo[p->y * lato_reticolo + p->x] = '0'; // riempi la casella nuova
+
+        // Aggiorna i contatori della particella
         if (direzione == 0) {
             p->passi_su_giu++;
         } else if (direzione == 1) {
@@ -124,7 +114,7 @@ double calcola_coefficiente_diffusione(Particella *particelle, int numero_partic
     }
     
     double media_spostamenti_quadrati = somma_spostamenti_quadrati / numero_particelle;
-    return media_spostamenti_quadrati / (2.0 * STEPS);
+    return media_spostamenti_quadrati / (2.0 * 2.0 * STEPS); // 2 * D * t (Sul libro formula (12.17))
 }
 
 int main(int argc, char *argv[]) {

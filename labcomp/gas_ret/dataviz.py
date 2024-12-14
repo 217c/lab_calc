@@ -7,7 +7,7 @@ cols = [
     "D"
     ]
 
-df = pd.read_csv("data.txt",
+df = pd.read_csv("data_new.txt",
                  names=cols,
                  skiprows=1,
                  sep = " ",
