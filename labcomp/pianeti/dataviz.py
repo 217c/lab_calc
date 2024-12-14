@@ -85,7 +85,7 @@ plt.plot(0, 0, "yo", label="Sole")  # "yo" rappresenta un punto giallo
 plt.xlabel('x')
 plt.ylabel('y')
 
-my_limite = 5
+my_limite = 2
 
 plt.xlim(-my_limite, my_limite)
 plt.ylim(-my_limite, my_limite)
