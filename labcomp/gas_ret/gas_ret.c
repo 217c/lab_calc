@@ -114,7 +114,7 @@ void stampa_reticolo (char *reticolo, int lato_reticolo) {
 }
 
 // Funzione per calcolare il coefficiente di diffusione
-double calcola_coefficiente_diffusione (Particella *particelle, int numero_particelle, int STEPS){
+double calcola_coefficiente_diffusione(Particella *particelle, int numero_particelle, int STEPS){
 
     double somma_spostamenti_quadrati = 0.0;
     for (int i = 0; i < numero_particelle; i++) { 
@@ -134,6 +134,8 @@ int main(int argc, char *argv[]) {
     int numero_particelle;       // Numero di particelle
     int STEPS;                 // Numero di passi della simulazione
     int seed;                 // Seed per il generatore di numeri casuali
+
+    double coefficiente_diffusione;
 
     lato_reticolo = atoi(argv[1]);
     numero_particelle = atoi(argv[2]);
@@ -155,8 +157,8 @@ int main(int argc, char *argv[]) {
     }
 
     // stampa il reticolo vuoto
-    printf("Reticolo inizialmente vuoto:\n");
-    stampa_reticolo(reticolo, lato_reticolo);
+    //printf("Reticolo inizialmente vuoto:\n");
+    //stampa_reticolo(reticolo, lato_reticolo);
 
     // Allocazione delle particelle
     Particella *particelle = (Particella *)malloc(numero_particelle * sizeof(Particella));
@@ -171,19 +173,22 @@ int main(int argc, char *argv[]) {
 
     // Simulazione
     for (int t = 0; t < STEPS; t++) {
-        printf("Passo %d:\n", t);
+        //printf("Passo %d:\n", t);
         
-        stampa_reticolo(reticolo, lato_reticolo);
+        //stampa_reticolo(reticolo, lato_reticolo);
 
         // Aggiorna la posizione delle particelle
         for (int i = 0; i < numero_particelle; i++) {
             aggiorna_posizione(&particelle[i], lato_reticolo, reticolo);
         }
+
+        // t D
+        printf("%i %f\n", t, calcola_coefficiente_diffusione(particelle, numero_particelle, t));
     }
 
     // Calcolo del coefficiente di diffusione
-    double coefficiente_diffusione = calcola_coefficiente_diffusione(particelle, numero_particelle, STEPS);
-    printf("Coefficiente di diffusione: %f\n", coefficiente_diffusione);
+    
+    //printf("Coefficiente di diffusione finale: %f\n", calcola_coefficiente_diffusione(particelle, numero_particelle, STEPS));
 
     // Libera la memoria
     free(reticolo);
